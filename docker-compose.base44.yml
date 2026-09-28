@@ -1,0 +1,29 @@
+services:
+  excalidraw:
+    image: node:24
+    container_name: excalidraw
+    working_dir: /opt/node_app
+    ports:
+      - "3000:3000"
+    restart: on-failure
+    stdin_open: true
+    environment:
+      - NODE_ENV=development
+      - BROWSER=echo
+    volumes:
+      - ./:/opt/node_app
+      - node_modules:/opt/node_app/node_modules
+    command: sh -c "yarn --frozen-lockfile --network-timeout 600000 && yarn --cwd ./excalidraw-app vite --host 0.0.0.0 --port 3000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+
+volumes:
+  node_modules:
