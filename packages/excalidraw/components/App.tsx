@@ -420,6 +420,7 @@ import {
   scrollBoundsIntoView,
 } from "../viewport";
 import { ElementCanvasButtons } from "../components/ElementCanvasButtons";
+import { QuickCloneHandles } from "../components/QuickCloneHandles";
 import { LaserTrails } from "../laserTrails";
 import { withBatchedUpdates, withBatchedUpdatesThrottled } from "../reactUtils";
 import { isPointHittingTextAutoResizeHandle } from "../textAutoResizeHandle";
@@ -451,6 +452,7 @@ import { AppCursor } from "./App.cursor";
 import { AppDrawShape } from "./App.drawshape";
 import { AppDuplicate } from "./App.duplicate";
 import { AppFlowchart } from "./App.flowchart";
+import { AppQuickClone } from "./App.quickClone";
 import { AppPan } from "./App.pan";
 import { AppViewport, RIGHT_SIDEBAR_WIDTH } from "./App.viewport";
 import { AppWheel } from "./App.wheel";
@@ -720,6 +722,7 @@ class App extends React.Component<AppProps, AppState> {
   public duplicate: AppDuplicate = new AppDuplicate(this);
   public toolDrag: AppToolDrag = new AppToolDrag(this);
   public flowchart: AppFlowchart = new AppFlowchart(this);
+  public quickClone: AppQuickClone = new AppQuickClone(this);
   public cursor: AppCursor = new AppCursor(this);
   public arrowText: AppArrowText = new AppArrowText(this);
   public pan: AppPan = new AppPan(this, {
@@ -2636,6 +2639,18 @@ class App extends React.Component<AppProps, AppState> {
                                   }}
                                 />
                               </ElementCanvasButtons>
+                            )}
+
+                          {this.isDefaultUIEnabled() &&
+                            this.isInteractionEnabled() &&
+                            !this.state.viewModeEnabled &&
+                            selectedElements.length === 1 &&
+                            isBindableElement(firstSelectedElement) && (
+                              <QuickCloneHandles
+                                element={firstSelectedElement}
+                                elementsMap={renderableElementsMap}
+                                onClone={this.quickClone.cloneWithArrow}
+                              />
                             )}
 
                           {this.isDefaultUIEnabled() && this.state.contextMenu && (
